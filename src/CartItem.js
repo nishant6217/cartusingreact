@@ -9,9 +9,27 @@ class CartItem extends React.Component{
             qty :1,
             img : ''
         }
-        this.increaseQuantity = this.increaseQuantity.bind(this)
-        this.decreaseQuantity = this.decreaseQuantity.bind(this)
+        // this.increaseQuantity = this.increaseQuantity.bind(this)
+        // this.decreaseQuantity = this.decreaseQuantity.bind(this)
+        // this.testing();
     }
+    // testing(){
+    //     const promise = new Promise((resolve , reject)=>{
+    //         setTimeout(()=>{
+    //             resolve('done');
+    //         },5000);
+    //     })
+
+    //     promise.then(()=>{
+    //         this.setState({qty:this.state.qty + 10})
+            
+    //         this.setState({qty:this.state.qty + 10})
+    //         console.log('state' ,this.state)
+        
+    //     })
+    // }
+    
+
     increaseQuantity = () =>{
         // this.state.qty+=1;
         // console.log("this" , this.state)
@@ -23,14 +41,29 @@ class CartItem extends React.Component{
         this.setState((prevState) =>{
             return {
                 qty : prevState.qty +1}
+        },() =>{
+            console.log('this.state' , this.state);
         })
+        // this.setState((prevState) =>{
+        //     return {
+        //         qty : prevState.qty +1}
+        // })
+        // this.setState((prevState) =>{
+        //     return {
+        //         qty : prevState.qty +1}
+        // })
+        
     }
     decreaseQuantity =() => {
-        this.setState((prevState) =>{
-            return{
-                qty : prevState.qty -1
-            }
-        })
+        const {qty} = this.state;
+        if(qty == 0){
+            return;
+        }
+            this.setState((prevState) =>{
+                return{
+                    qty : prevState.qty -1
+                }
+            })
     }
     render(){
         const {price , title , qty} = this.state;
