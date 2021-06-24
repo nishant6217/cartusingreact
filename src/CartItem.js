@@ -1,69 +1,18 @@
 import React from 'react';
-class CartItem extends React.Component{
+// class CartItem extends React.Component{
     
-    // testing(){
-    //     const promise = new Promise((resolve , reject)=>{
-    //         setTimeout(()=>{
-    //             resolve('done');
-    //         },5000);
-    //     })
-
-    //     promise.then(()=>{
-    //         this.setState({qty:this.state.qty + 10})
-            
-    //         this.setState({qty:this.state.qty + 10})
-    //         console.log('state' ,this.state)
-        
-    //     })
-    // }
-    
-
-    // increaseQuantity = () =>{
-        // this.state.qty+=1;
-        // console.log("this" , this.state)
-        // setState form 1
-        // this.setState({
-        //     qty : this.state.qty + 1
-        // })
-        // setState form 2 give more priority
-        // this.setState((prevState) =>{
-        //     return {
-        //         qty : prevState.qty +1}
-        // },() =>{
-        //     console.log('this.state' , this.state);
-        // })
-        // this.setState((prevState) =>{
-        //     return {
-        //         qty : prevState.qty +1}
-        // })
-        // this.setState((prevState) =>{
-        //     return {
-        //         qty : prevState.qty +1}
-        // })
-        
-    // }
-    // decreaseQuantity =() => {
-    //     const {qty} = this.state;
-    //     if(qty == 0){
-    //         return;
-    //     }
-    //         this.setState((prevState) =>{
-    //             return{
-    //                 qty : prevState.qty -1
-    //             }
-    //         })
-    // }
-    render(){
-        console.log('this.props' ,this.props)
-        const {price , title , qty} = this.props.product;
-        const{product , onDecreaseQuantity , onIncreaseQuantity , onDeleteProduct} = this.props;        
+   
+        const CartItem = (props) =>{
+        // console.log('this.props' ,props)
+        const {price , title , qty} = props.product;
+        const {product , onDecreaseQuantity , onIncreaseQuantity , onDeleteProduct} = props;        
         return(
 
            
             <div className = "cart-item">
                 {/* {this.props.jsx} */}
                 <div className = "left-block">
-                    <img style={styles.image}/>
+                    <img style={styles.image} src={product.img}/>
                 </div>
                 <div className = "right-block">
                     <div style={{fontSize :25}}>{title}</div>
@@ -97,7 +46,9 @@ class CartItem extends React.Component{
             </div>
         )
     }
-}
+// }
+        
+
 
 const styles = {
     image :{
