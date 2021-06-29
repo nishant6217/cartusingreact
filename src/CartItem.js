@@ -12,7 +12,7 @@ import React from 'react';
             <div className = "cart-item">
                 {/* {this.props.jsx} */}
                 <div className = "left-block">
-                    <img style={styles.image} src={product.img}/>
+                    <img style={styles.image} src={product.img} alt="there is product"/>
                 </div>
                 <div className = "right-block">
                     <div style={{fontSize :25}}>{title}</div>

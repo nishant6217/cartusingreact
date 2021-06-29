@@ -1,6 +1,7 @@
 import React from 'react';
 import Cart from './Cart';
 import Navbar from'./Navbar';
+import  firebase from 'firebase/app';
 
 
 
@@ -10,30 +11,59 @@ class App extends React.Component {
     super();
     this.state ={
         
-        products :[
-            {
-                price :999,
-                title :'Mobile Phone',
-                qty :4,
-                img : 'https://images.unsplash.com/photo-1557180295-76eee20ae8aa?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80',
-                id :1
-            },
-            {
-                price :99,
-                title :'Watch',
-                qty :1,
-                img : 'https://images.unsplash.com/photo-1542496658-e33a6d0d50f6?ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8d2F0Y2h8ZW58MHx8MHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
-                id:2
-            },
-            {
-                price :999,
-                title :'Laptop',
-                qty :4,
-                img : 'https://images.unsplash.com/photo-1531297484001-80022131f5a1?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=707&q=80',
-                id:3
-            }
-        ]
+        products :[] ,
+        loading:true
     }
+    this.db = firebase.firestore()
+   
+  }
+  componentDidMount(){
+    // firebase
+    //   .firestore()
+    //   .collection('products')
+    //   .get()
+    //   .then((snapshot) => {
+    //     console.log(snapshot)
+    //     snapshot.docs.map((doc) => {
+    //       console.log(doc.data())
+    //     })
+
+    //     const products = snapshot.docs.map((doc) => {
+    //       const data = doc.data();
+    //       data['id'] =doc.id
+
+
+    //       return data;
+    //     })
+    //     this.setState({
+    //       products :products,
+    //       loading : false
+    //     })
+    //   })
+  
+  this.db
+  .collection('products')
+  // .where('price','==',900)
+  // .where('title','==','Camera')
+  // .orderBy('qty' ,'desc')
+  .onSnapshot ((snapshot) => {
+    console.log(snapshot)
+    snapshot.docs.map((doc) => {
+      console.log(doc.data())
+    })
+
+    const products = snapshot.docs.map((doc) => {
+      const data = doc.data();
+      data['id'] =doc.id
+
+
+      return data;
+    })
+    this.setState({
+      products :products,
+      loading : false
+    })
+  })
   }
     
     // this.increaseQuantity = this.increaseQuantity.bind(this)
@@ -44,11 +74,22 @@ handleIncreaseQuantity = (product) => {
     console.log ('hey increase this property'  , product);
     const {products} = this.state ;
     const index = products.indexOf(product);
-    products[index].qty +=1
+    // products[index].qty +=1
     
-    this.setState({
-        products :products
-    })
+    // this.setState({
+    //     products :products
+    // })
+    const docRef = this.db.collection('products').doc(products[index].id);
+    docRef
+      .update({
+        qty :products[index].qty +1
+      })
+      .then(()=>{
+        console.log("updtae successful")
+      })
+      .catch((error)=>{
+          console.log('error' , error)
+      })
 
    
 }
@@ -56,22 +97,37 @@ handleDecreaseQuantity =(product) => {
     // console.log('hey decrease this property' , product) ;
     const {products} = this.state ;
     const index = products.indexOf(product);
-    if(products[index].qty == 0){
+    if(products[index].qty === 0){
         return 
     }
-    products[index].qty -= 1
+    // products[index].qty -= 1
 
-    this.setState({
-        products:products
-    })
+    // this.setState({
+    //     products:products
+    // })
+    const docRef = this.db.collection('products').doc(products[index].id);
+    docRef
+      .update({
+        qty:products[index].qty -1
+      })
+      .then(()=>{
+        console.log("update successfully ");
+      })
+      .catch((error) =>{
+        console.log("error")
+      })
 }
 handleDeleteProduct =(id) =>{
-    const {products} = this .state;
-    const items = products.filter((item) => item.id !== id);  //retrurn a another array products is not equal to id passed
-
-    this.setState({
-        products : items
-    })
+    const {products} = this.state;
+    const docRef = this.db.collection('products').doc(id);
+    docRef
+      .delete()
+      .then(()=>{
+        console.log("deleted successfully")
+      })
+      .catch((error)=>{
+        console.log("error" , error);
+      })
 
 } 
 getCartCount =() => {
@@ -88,26 +144,47 @@ getCartTotal =() =>{
 
   products.map((product) =>{
     cartTotal = cartTotal + product.qty * product.price
+
+    return " ";
   })
 
 
   return cartTotal ;
 }
+addProduct= () =>{
+  this.db
+    .collection('products')
+    .add({
+      img :"",
+      price : '900',
+      qty :"3",
+      title :"Washing Machine"
+    })
+    .then((docRef) =>{
+      console.log('product has been added' , docRef)
+    })
+    .catch((error)=>{
+      console.log("error" , error)
+    })
+}
     
     render() {
-    const {products} = this.state;
+    const {products , loading } = this.state;
     return (
       <div className="App">
         <Navbar 
           count = {this.getCartCount()}
         />
+        {/* <button onClick={this.addProduct} style ={{padding :20 , fontSize :20}}>Add a Product</button> */}
         <Cart 
-          products = {products}
+          
           onIncreaseQuantity = {this.handleIncreaseQuantity}
           onDecreaseQuantity = {this.handleDecreaseQuantity}
           onDeleteProduct ={this.handleDeleteProduct}
+          products = {products}  
         />
       {/* <Navbar /> */}
+      {loading && <h3>Loading Products ...</h3>}
       <div style={{padding :10,fontSize :20 }}>TOTAL : {this.getCartTotal()} </div>
 
       </div>
